@@ -39,6 +39,7 @@ namespace RAT_test_serverside
 
                 while (true)
                 {
+                    Console.WriteLine();
                     Console.WriteLine("Enter Command:");
                     cmd = Console.ReadLine();
 
@@ -53,8 +54,10 @@ namespace RAT_test_serverside
                     try
                     {
                         Console.WriteLine();
-                        string data = sr.ReadLine();
-                        while (data != null)
+                        Console.WriteLine("OUTPUT:");
+                        string data = String.Empty;
+                        data = sr.ReadLine();
+                        while (sr.Peek() != -1)
                         {
                             Console.WriteLine(data);
                             data = sr.ReadLine();
