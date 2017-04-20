@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAT_test_serverside", "RAT_test_serverside\RAT_test_serverside.csproj", "{0130A4BA-E51D-467D-B5CE-9A0964FB40EE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0130A4BA-E51D-467D-B5CE-9A0964FB40EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0130A4BA-E51D-467D-B5CE-9A0964FB40EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0130A4BA-E51D-467D-B5CE-9A0964FB40EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0130A4BA-E51D-467D-B5CE-9A0964FB40EE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
